@@ -3,27 +3,23 @@ data "aws_iam_policy_document" "lb_controller" {
   count = var.enabled ? 1 : 0
 
   statement {
-    actions = [
-      "iam:CreateServiceLinkedRole"
-    ]
-
-    resources = [
-      "*"
-    ]
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["iam:CreateServiceLinkedRole"]
 
     condition {
       test     = "StringEquals"
       variable = "iam:AWSServiceName"
-
-      values = [
-        "elasticloadbalancing.amazonaws.com"
-      ]
+      values   = ["elasticloadbalancing.amazonaws.com"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "ec2:DescribeAccountAttributes",
       "ec2:DescribeAddresses",
@@ -47,15 +43,15 @@ data "aws_iam_policy_document" "lb_controller" {
       "elasticloadbalancing:DescribeTargetGroups",
       "elasticloadbalancing:DescribeTargetGroupAttributes",
       "elasticloadbalancing:DescribeTargetHealth",
-      "elasticloadbalancing:DescribeTags"
+      "elasticloadbalancing:DescribeTags",
     ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "cognito-idp:DescribeUserPoolClient",
       "acm:ListCertificates",
@@ -73,202 +69,168 @@ data "aws_iam_policy_document" "lb_controller" {
       "shield:GetSubscriptionState",
       "shield:DescribeProtection",
       "shield:CreateProtection",
-      "shield:DeleteProtection"
+      "shield:DeleteProtection",
     ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:RevokeSecurityGroupIngress"
+      "ec2:RevokeSecurityGroupIngress",
     ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
   }
 
   statement {
-    actions = [
-      "ec2:CreateSecurityGroup"
-    ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["ec2:CreateSecurityGroup"]
   }
 
   statement {
-    actions = [
-      "ec2:CreateTags"
-    ]
-
-    resources = [
-      "arn:${var.arn_format}:ec2:*:*:security-group/*"
-    ]
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:ec2:*:*:security-group/*"]
+    actions   = ["ec2:CreateTags"]
 
     condition {
       test     = "StringEquals"
       variable = "ec2:CreateAction"
-
-      values = [
-        "CreateSecurityGroup"
-      ]
+      values   = ["CreateSecurityGroup"]
     }
 
     condition {
       test     = "Null"
       variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "false"
-      ]
+      values   = ["false"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:ec2:*:*:security-group/*"]
+
     actions = [
       "ec2:CreateTags",
-      "ec2:DeleteTags"
-    ]
-
-    resources = [
-      "arn:${var.arn_format}:ec2:*:*:security-group/*"
+      "ec2:DeleteTags",
     ]
 
     condition {
       test     = "Null"
       variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "true"
-      ]
+      values   = ["true"]
     }
 
     condition {
       test     = "Null"
       variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "false"
-      ]
+      values   = ["false"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "ec2:AuthorizeSecurityGroupIngress",
       "ec2:RevokeSecurityGroupIngress",
-      "ec2:DeleteSecurityGroup"
-    ]
-
-    resources = [
-      "*"
+      "ec2:DeleteSecurityGroup",
     ]
 
     condition {
       test     = "Null"
       variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "false"
-      ]
+      values   = ["false"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "elasticloadbalancing:CreateLoadBalancer",
-      "elasticloadbalancing:CreateTargetGroup"
-    ]
-
-    resources = [
-      "*"
+      "elasticloadbalancing:CreateTargetGroup",
     ]
 
     condition {
       test     = "Null"
       variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "false"
-      ]
+      values   = ["false"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "elasticloadbalancing:CreateListener",
       "elasticloadbalancing:DeleteListener",
       "elasticloadbalancing:CreateRule",
-      "elasticloadbalancing:DeleteRule"
+      "elasticloadbalancing:DeleteRule",
     ]
-    resources = [
-      "*",
-    ]
-    effect = "Allow"
   }
 
   statement {
-    actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:RemoveTags"
-    ]
+    sid    = ""
+    effect = "Allow"
 
     resources = [
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:targetgroup/*/*",
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+      "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+    ]
+
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
     ]
 
     condition {
       test     = "Null"
       variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "true"
-      ]
+      values   = ["true"]
     }
 
     condition {
       test     = "Null"
       variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "false"
-      ]
+      values   = ["false"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid    = ""
+    effect = "Allow"
+
+    resources = [
+      "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
+      "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+      "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+      "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
+    ]
+
     actions = [
       "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:RemoveTags"
+      "elasticloadbalancing:RemoveTags",
     ]
-    resources = [
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:listener/net/*/*/*",
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:listener/app/*/*/*",
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
-    ]
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "elasticloadbalancing:ModifyLoadBalancerAttributes",
       "elasticloadbalancing:SetIpAddressType",
@@ -277,50 +239,40 @@ data "aws_iam_policy_document" "lb_controller" {
       "elasticloadbalancing:DeleteLoadBalancer",
       "elasticloadbalancing:ModifyTargetGroup",
       "elasticloadbalancing:ModifyTargetGroupAttributes",
-      "elasticloadbalancing:DeleteTargetGroup"
-    ]
-
-    resources = [
-      "*"
+      "elasticloadbalancing:DeleteTargetGroup",
     ]
 
     condition {
       test     = "Null"
       variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-
-      values = [
-        "false"
-      ]
+      values   = ["false"]
     }
-
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"]
+
     actions = [
       "elasticloadbalancing:RegisterTargets",
-      "elasticloadbalancing:DeregisterTargets"
+      "elasticloadbalancing:DeregisterTargets",
     ]
-    resources = [
-      "arn:${var.arn_format}:elasticloadbalancing:*:*:targetgroup/*/*"
-    ]
-    effect = "Allow"
   }
 
   statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
     actions = [
       "elasticloadbalancing:SetWebAcl",
       "elasticloadbalancing:ModifyListener",
       "elasticloadbalancing:AddListenerCertificates",
       "elasticloadbalancing:RemoveListenerCertificates",
-      "elasticloadbalancing:ModifyRule"
+      "elasticloadbalancing:ModifyRule",
     ]
-    resources = [
-      "*"
-    ]
-    effect = "Allow"
   }
-
 }
 
 resource "aws_iam_policy" "lb_controller" {
